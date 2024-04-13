@@ -5,5 +5,6 @@ export default defineNuxtConfig({
     modules: [
         '@nuxtjs/tailwindcss',
         "nuxt-lodash",
+        '@nuxt/image',
     ],
 })
