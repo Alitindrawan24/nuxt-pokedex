@@ -12,7 +12,7 @@
         </div>
 
         <div class="relative overflow-x-auto h-screen">
-          <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <table class="w-full text-sm  rtl:text-right table-auto text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
                 <TableHeader :orders="orders" :order="order" :name="'id'" :label="'No'" />
@@ -35,47 +35,49 @@
                 <TableHeader :orders="orders" :order="order" :name="'base_stats.total'" :label="'BST'" />
               </tr>
             </thead>
-            <tbody>
+            <tbody class="">
               <tr v-for="(pokemon, key) in data" :key="key"
                 v-show="show(pokemon)"
                 :class="`bg-slate-900 border-b dark:border-gray-700 bg-gradient-to-r from-${pokemon.types[0].name} via-${pokemon.types[0].name}/75 to-${pokemon.types[0].name}/50`">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <th scope="row" class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   {{ pokemon.id }}
                 </th>
-                <td class="px-6 py-4">
+                <td class="px-4 py-2">
                   <NuxtImg :src="pokemon.sprite" :alt="pokemon.name" loading="lazy" />
                 </td>
-                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   {{ pokemon.name }}
                 </td>
-                <td class="px-6 py-4">
-                  <img v-for="(types, key) in pokemon.types" :key="key" :src="types.gif" :alt="types.name" />
+                <td>
+                  <div class="flex">
+                    <img v-for="(types, key) in pokemon.types" :key="key" :src="types.gif" :alt="types.name" />
+                  </div>
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-4 py-2">
                   <button
                     class="grid mb-1 w-fit bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300"
                     v-for="(ability, key) in pokemon.abilities" :key="key">{{ ability.name
                     }}</button>
                 </td>
-                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   {{ pokemon.base_stats.hp }}
                 </td>
-                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   {{ pokemon.base_stats.attack }}
                 </td>
-                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   {{ pokemon.base_stats.defense }}
                 </td>
-                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   {{ pokemon.base_stats.special_attack }}
                 </td>
-                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   {{ pokemon.base_stats.special_defense }}
                 </td>
-                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   {{ pokemon.base_stats.speed }}
                 </td>
-                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   {{ pokemon.base_stats.total }}
                 </td>
               </tr>
