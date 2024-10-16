@@ -11,6 +11,15 @@
             </select>
           </div>
 
+          <!-- Dropdown for filtering Pokémon by type -->
+          <div class="flex items-center">
+            <label for="typeFilter" class="mr-2 text-white">Filter by type:</label>
+            <select v-model="selectedType" id="typeFilter" class="bg-gray-700 text-white px-2 py-1 rounded">
+              <option value="">All Types</option>
+              <option v-for="type in types" :key="type" :value="type">{{ type }}</option>
+            </select>
+          </div>
+
           <!-- Pagination navigation -->
           <div>
             <button @click="prevPage" :disabled="currentPage === 1" 
@@ -110,21 +119,33 @@
 
 <script setup lang="ts">
 
-const search = ref("")
+const search = ref("");
+const selectedType = ref(""); // For filtering by type
+const types = ref<string[]>([]); // List of Pokémon types for the dropdown
 
 const pageSizes = [10, 15, 20, 30];
-const pageSize = ref(20)
+const pageSize = ref(20);
 const currentPage = ref(1);
 
 const totalPages = computed(() => {
-  if (!data.value) return 1;
-  return Math.ceil(data.value.length / pageSize.value);
+  if (!filteredPokemon.value) return 1;
+  return Math.ceil(filteredPokemon.value.length / pageSize.value);
 });
 
 const paginatedPokemon = computed(() => {
-  if (!data.value) return [];
+  if (!filteredPokemon.value) return [];
   const start = (currentPage.value - 1) * pageSize.value;
-  return data.value.slice(start, start + pageSize.value);
+  return filteredPokemon.value.slice(start, start + pageSize.value);
+});
+
+// Filtered list based on selected type
+const filteredPokemon = computed(() => {
+  if (!data.value) return [];
+  if (selectedType.value === "") return data.value;
+
+  return data.value.filter((pokemon) =>
+    pokemon.types.some((type) => type.name === selectedType.value)
+  );
 });
 
 const nextPage = () => {
@@ -160,7 +181,7 @@ interface Pokemon {
   name: string,
   sprite: string,
   types: Type[],
-  abilities: Ability[]
+  abilities: Ability[],
   base_stats: BaseStats,
 }
 type SortOrder = 'asc' | 'desc';
@@ -173,13 +194,13 @@ const orders = reactive({
 });
 
 const order = (key: string) => {
-  let ordering: SortOrder = 'asc'
+  let ordering: SortOrder = 'asc';
   if (orders.name == key) {
     ordering = orders.ordering == 'asc' ? 'desc' : 'asc';
   }
 
-  orders.name = key;
-  orders.ordering = ordering
+  orders.name = key
+orders.ordering = ordering
 
   const shuffledData = useOrderBy(data.value, key, ordering);
   data.value = shuffledData
@@ -198,6 +219,18 @@ const show = (pokemon:Pokemon) => {
 
 onMounted(async () => {
   const { data: fetchedData } = await useFetch<Pokemon[]>("pokemon.min.json");
-  data.value = fetchedData.value
+  data.value = fetchedData.value;
+
+  // Extract unique types from the Pokémon data
+  const allTypes = new Set<string>();
+  data.value.forEach((pokemon) => {
+    pokemon.types.forEach((type) => {
+      allTypes.add(type.name);
+    });
+  });
+
+  // Convert Set to Array and update types
+  types.value = Array.from(allTypes);
 });
+
 </script>
