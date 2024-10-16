@@ -33,6 +33,8 @@
                 <th scope="col" class="px-4 py-2">
                   Type
                 </th>
+                <TableHeader :orders="orders" :order="order" :name="'height'" :label="'Height'" />
+                <TableHeader :orders="orders" :order="order" :name="'weight'" :label="'Weight'" />
                 <th scope="col" class="px-4 py-2">
                   Ability
                 </th>
@@ -63,6 +65,12 @@
                     <img v-for="(types, key) in pokemon.types" :key="key" :src="types.gif" :alt="types.name" />
                   </div>
                 </td>
+                <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                   {{ pokemon.height }}
+                </td>
+                <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  {{ pokemon.weight }}
+                 </td>
                 <td class="px-4 py-2">
                   <button
                     class="grid mb-1 w-fit bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300"
@@ -162,6 +170,8 @@ interface Pokemon {
   types: Type[],
   abilities: Ability[]
   base_stats: BaseStats,
+  height: number,
+  weight: number,
 }
 type SortOrder = 'asc' | 'desc';
 
