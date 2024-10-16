@@ -2,12 +2,22 @@
   <div class="bg-gray-900">
     <div class="container mx-auto py-4 px-8">
       <section class="mt-8">
-        <div class="grid gap-6 mb-6 md:grid-cols-3">
+        <div class="flex justify-between mb-4">
+          <!-- Dropdown for selecting number of Pokémon per page -->
+          <div class="flex items-center">
+            <label for="pageSize" class="mr-2 text-white">Pokémon per page:</label>
+            <select v-model="pageSize" id="pageSize" class="bg-gray-700 text-white px-2 py-1 rounded">
+              <option v-for="size in pageSizes" :key="size" :value="size">{{ size }}</option>
+            </select>
+          </div>
+
+          <!-- Pagination navigation -->
           <div>
-            <label for="pokemon_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Search</label>
-            <input v-model="search" type="text" id="pokemon_name"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Enter pokemon / ability" autocomplete="off"/>
+            <button @click="prevPage" :disabled="currentPage === 1" 
+                    class="px-4 py-2 bg-gray-700 text-white disabled:opacity-50">Previous</button>
+            <span class="text-white mx-4">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button @click="nextPage" :disabled="currentPage === totalPages"
+                    class="px-4 py-2 bg-gray-700 text-white disabled:opacity-50">Next</button>
           </div>
         </div>
 
@@ -36,7 +46,7 @@
               </tr>
             </thead>
             <tbody class="">
-              <tr v-for="(pokemon, key) in data" :key="key"
+              <tr v-for="(pokemon, key) in paginatedPokemon" :key="key"
                 v-show="show(pokemon)"
                 :class="`bg-slate-900 border-b dark:border-gray-700 bg-gradient-to-r from-${pokemon.types[0].name} via-${pokemon.types[0].name}/75 to-${pokemon.types[0].name}/50`">
                 <th scope="row" class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -85,6 +95,14 @@
           </table>
         </div>
 
+        <div class="flex justify-between mt-4">
+          <button @click="prevPage" :disabled="currentPage === 1" 
+                  class="px-4 py-2 bg-gray-700 text-white disabled:opacity-50">Previous</button>
+          <span class="text-white">Page {{ currentPage }} of {{ totalPages }}</span>
+          <button @click="nextPage" :disabled="currentPage === totalPages"
+                  class="px-4 py-2 bg-gray-700 text-white disabled:opacity-50">Next</button>
+        </div>
+
       </section>
     </div>
   </div>
@@ -93,6 +111,33 @@
 <script setup lang="ts">
 
 const search = ref("")
+
+const pageSizes = [10, 15, 20, 30];
+const pageSize = ref(20)
+const currentPage = ref(1);
+
+const totalPages = computed(() => {
+  if (!data.value) return 1;
+  return Math.ceil(data.value.length / pageSize.value);
+});
+
+const paginatedPokemon = computed(() => {
+  if (!data.value) return [];
+  const start = (currentPage.value - 1) * pageSize.value;
+  return data.value.slice(start, start + pageSize.value);
+});
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
 
 interface Type {
   name: string,
