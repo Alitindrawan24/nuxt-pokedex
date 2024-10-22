@@ -151,14 +151,27 @@ const paginatedPokemon = computed(() => {
   return filteredPokemon.value.slice(start, start + pageSize.value);
 });
 
-// Filtered list based on selected type
+// Filtered list based on selected type and search value
 const filteredPokemon = computed(() => {
   if (!data.value) return [];
-  if (selectedType.value === "") return data.value;
 
-  return data.value.filter((pokemon) =>
+  let filtered = data.value;
+  if (selectedType.value !== "") {
+    filtered = filtered.filter((pokemon) =>
     pokemon.types.some((type) => type.name === selectedType.value)
   );
+  }
+  
+  if (search.value !== ''){
+    filtered = filtered.filter((pokemon)=>{
+  const isPokemonName = pokemon.name.toLowerCase().indexOf(search.value.toLowerCase()) !== -1
+  const isPokemonAbility = pokemon.abilities.filter((ability:Ability) => ability.name.toLowerCase().indexOf(search.value.toLowerCase()) !== -1).length > 0;
+
+  return isPokemonName || isPokemonAbility
+  });
+  }
+
+  return filtered;
 });
 
 const nextPage = () => {
