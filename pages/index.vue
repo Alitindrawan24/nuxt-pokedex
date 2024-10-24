@@ -28,10 +28,10 @@
           <!-- Pagination navigation -->
           <div>
             <button @click="prevPage" :disabled="currentPage === 1" 
-                    class="px-4 py-2 text-white bg-gray-700 disabled:opacity-50">Previous</button>
+                    class="px-4 py-2 text-white bg-gray-700 disabled:opacity-50 rounded">Previous</button>
             <span class="mx-4 text-white">Page {{ currentPage }} of {{ totalPages }}</span>
             <button @click="nextPage" :disabled="currentPage === totalPages"
-                    class="px-4 py-2 text-white bg-gray-700 disabled:opacity-50">Next</button>
+                    class="px-4 py-2 text-white bg-gray-700 disabled:opacity-50 rounded">Next</button>
           </div>
         </div>
 
@@ -119,10 +119,10 @@
 
         <div class="flex justify-between mt-4">
           <button @click="prevPage" :disabled="currentPage === 1" 
-                  class="px-4 py-2 text-white bg-gray-700 disabled:opacity-50">Previous</button>
+                  class="px-4 py-2 text-white bg-gray-700 disabled:opacity-50 rounded">Previous</button>
           <span class="text-white">Page {{ currentPage }} of {{ totalPages }}</span>
           <button @click="nextPage" :disabled="currentPage === totalPages"
-                  class="px-4 py-2 text-white bg-gray-700 disabled:opacity-50">Next</button>
+                  class="px-4 py-2 text-white bg-gray-700 disabled:opacity-50 rounded">Next</button>
         </div>
 
       </section>
