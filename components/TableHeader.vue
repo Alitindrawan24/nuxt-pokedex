@@ -1,5 +1,10 @@
 <template>
-  <th scope="col" class="px-4 py-2 cursor-pointer" :class="{ 'dark:bg-slate-600': orders.name == name }"
+  <th scope="col" class="px-4 py-2 cursor-pointer"  :class="[
+      ' dark:hover:bg-gray-500 dark:hover:text-gray-900',
+      {
+        'bg-red-200 dark:bg-gray-600 text-white': orders.name === name,
+      }
+    ]"
     @click="order(name)">
     {{ label }}
     <span v-if="orders.name == name && orders.ordering == 'asc'" class="float-end" v-html="'&uarr;'"></span>
