@@ -2,7 +2,8 @@
   <div class="bg-gray-900">
     <div class="container px-8 py-4 mx-auto">
       <section class="mt-8">
-        <div class="flex justify-between mb-4">
+        <div class="flex flex-col lg:flex-row gap-4 justify-between mb-4">
+
           <!-- Dropdown for selecting number of Pokémon per page -->
           <div class="flex items-center">
             <label for="pageSize" class="mr-2 text-white">Pokémon per page:</label>
@@ -10,12 +11,15 @@
               <option v-for="size in pageSizes" :key="size" :value="size">{{ size }}</option>
             </select>
           </div>
-          <div class="flex items-center justify-center gap-2 ">
-            <label for="pokemon_name" class="block text-sm font-medium text-gray-900 dark:text-white">Search:</label>
+
+          <!-- Search input -->
+          <div class="flex items-center">
+            <label for="pokemon_name" class="mr-2 block text-sm font-medium text-gray-900 dark:text-white">Search:</label>
             <input v-model="search" type="text" id="pokemon_name"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full max-w-sm px-2.5 py-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Enter pokemon name..." />
           </div>
+
           <!-- Dropdown for filtering Pokémon by type -->
           <div class="flex items-center">
             <label for="typeFilter" class="mr-2 text-white">Filter by type:</label>
@@ -26,7 +30,7 @@
           </div>
 
           <!-- Pagination navigation -->
-          <div>
+          <div class="flex items-center justify-between">
             <button @click="prevPage" :disabled="currentPage === 1" 
                     class="px-4 py-2 text-white bg-gray-700 disabled:opacity-50 rounded">Previous</button>
             <span class="mx-4 text-white">Page {{ currentPage }} of {{ totalPages }}</span>
@@ -117,7 +121,7 @@
           </table>
         </div>
 
-        <div class="flex justify-between mt-4">
+        <div class="flex items-center justify-between mt-4">
           <button @click="prevPage" :disabled="currentPage === 1" 
                   class="px-4 py-2 text-white bg-gray-700 disabled:opacity-50 rounded">Previous</button>
           <span class="text-white">Page {{ currentPage }} of {{ totalPages }}</span>
