@@ -7,7 +7,7 @@ export default defineNuxtConfig({
       '@nuxtjs/tailwindcss',
       "nuxt-lodash",
       '@nuxt/image',
-      "nuxt-icon"
+      "@nuxt/icon"
   ],
 
   compatibilityDate: '2024-10-23',

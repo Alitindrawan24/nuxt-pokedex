@@ -17,18 +17,18 @@
 
            <!-- Dropdown for filtering Pokémon by type -->
            <div class="flex items-center">
-            <label 
-              for="typeFilter" 
+            <label
+              for="typeFilter"
               class="mr-2"
               :class="{'text-gray-800': !isDark, 'text-white': isDark}"
             >
               Filter by type:
             </label>
-            <select 
-              v-model="selectedType" 
-              id="typeFilter" 
+            <select
+              v-model="selectedType"
+              id="typeFilter"
               class="px-2 py-1 border rounded"
-              :class="{'bg-[#afe0eb] text-gray-800 border-gray-300': !isDark, 
+              :class="{'bg-[#afe0eb] text-gray-800 border-gray-300': !isDark,
                       'bg-gray-700 text-white border-gray-600': isDark}"
             >
               <option value="">All Types</option>
@@ -43,34 +43,34 @@
             </label>
             <input v-model="search" type="text" id="pokemon_name"
               class="text-sm rounded-lg block w-full max-w-sm px-2.5 py-2 border focus:ring-blue-500 focus:border-blue-500"
-              :class="{'bg-[#afe0eb] text-gray-800 placeholder:text-gray-800 border-gray-300': !isDark, 
+              :class="{'bg-[#afe0eb] text-gray-800 placeholder:text-gray-800 border-gray-300': !isDark,
                       'bg-gray-700 text-white border-gray-600': isDark}"
-              placeholder="Enter pokemon name..." 
+              placeholder="Enter pokemon name..."
             />
           </div>
 
           <!-- Pagination navigation -->
           <div class="flex items-center justify-between">
-            <button 
-              @click="prevPage" 
+            <button
+              @click="prevPage"
               :disabled="currentPage === 1"
               class="px-4 py-2 rounded disabled:opacity-50"
-              :class="{'bg-[#afe0eb] text-gray-800 border-gray-300': !isDark, 
+              :class="{'bg-[#afe0eb] text-gray-800 border-gray-300': !isDark,
                       'bg-gray-700 text-white border-gray-600': isDark}"
             >
               Previous
             </button>
-            <span 
+            <span
               class="mx-4"
               :class="{'text-gray-800': !isDark, 'text-white': isDark}"
             >
               Page {{ currentPage }} of {{ totalPages }}
             </span>
-            <button 
-              @click="nextPage" 
+            <button
+              @click="nextPage"
               :disabled="currentPage === totalPages"
               class="px-4 py-2 rounded disabled:opacity-50"
-              :class="{'bg-[#afe0eb] text-gray-800 border-gray-300': !isDark, 
+              :class="{'bg-[#afe0eb] text-gray-800 border-gray-300': !isDark,
                       'bg-gray-700 text-white border-gray-600': isDark}"
             >
               Next
@@ -78,14 +78,14 @@
           </div>
 
         <div class="flex justify-end ">
-        <button   
-          @click="handleThemeToggle" 
+        <button
+          @click="handleThemeToggle"
           class="relative flex items-center justify-center gap-2 px-3 py-3 overflow-hidden transition-all duration-500 border rounded-full"
-          :class="{'bg-gray-200 text-gray-800 border-gray-300': !isDark, 
+          :class="{'bg-gray-200 text-gray-800 border-gray-300': !isDark,
                   'bg-gray-700 text-white border-gray-600': isDark}"
         >
           <div class="relative flex items-center w-5 h-5">
-            <Icon 
+            <Icon
               name="ph:moon-bold"
               class="absolute w-5 h-5 transition-all duration-500"
               :class="[
@@ -93,8 +93,8 @@
                 isAnimating ? 'spin-animation' : ''
               ]"
             />
-            <Icon 
-              name="ph:sun-bold"`
+            <Icon
+              name="ph:sun-bold"
               class="absolute w-5 h-5 transition-all duration-500"
               :class="[
                 !isDark ? 'transform-none opacity-100' : 'scale-150 opacity-0',
@@ -103,11 +103,11 @@
             />
           </div>
           <!-- Ripple effect -->
-          <div 
+          <div
             v-if="isAnimating"
             class="absolute inset-0 -z-10"
           >
-            <div 
+            <div
               class="absolute inset-0 rounded-lg ripple-effect"
               :class="isDark ? 'bg-gray-600' : 'bg-gray-300'"
             />
@@ -137,8 +137,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr 
-                v-for="(pokemon, key) in paginatedPokemon" 
+              <tr
+                v-for="(pokemon, key) in paginatedPokemon"
                 :key="key"
                 v-show="show(pokemon)"
                 :class="[
@@ -174,7 +174,7 @@
                 </td>
                 <td class="px-4 py-2">
                   <button
-                    v-for="(ability, key) in pokemon.abilities" 
+                    v-for="(ability, key) in pokemon.abilities"
                     :key="key"
                     class="grid mb-1 w-fit text-xs font-medium me-2 px-2.5 py-0.5 rounded"
                     :class="{'bg-red-100 text-gray-800': !isDark, 'bg-gray-700 text-gray-300': isDark}"
@@ -216,11 +216,11 @@
         </div>
 
         <div class="flex items-center justify-between mt-4">
-          <button 
-            @click="prevPage" 
+          <button
+            @click="prevPage"
             :disabled="currentPage === 1"
             class="px-4 py-2 rounded disabled:opacity-50"
-            :class="{'bg-[#bfe9f3] text-gray-800 border-gray-300': !isDark, 
+            :class="{'bg-[#bfe9f3] text-gray-800 border-gray-300': !isDark,
                     'bg-gray-700 text-white border-gray-600': isDark}"
           >
             Previous
@@ -228,11 +228,11 @@
           <span :class="{'text-gray-800': !isDark, 'text-white': isDark}">
             Page {{ currentPage }} of {{ totalPages }}
           </span>
-          <button 
-            @click="nextPage" 
+          <button
+            @click="nextPage"
             :disabled="currentPage === totalPages"
             class="px-4 py-2 rounded disabled:opacity-50"
-            :class="{'bg-[#bfe9f3] text-gray-800 border-gray-300': !isDark, 
+            :class="{'bg-[#bfe9f3] text-gray-800 border-gray-300': !isDark,
                     'bg-gray-700 text-white border-gray-600': isDark}"
           >
             Next
@@ -288,11 +288,11 @@ const filteredPokemon = computed(() => {
       pokemon.types.some((type) => type.name === selectedType.value)
     );
   }
-  
+
   if (search.value !== '') {
     filtered = filtered.filter((pokemon) => {
       const isPokemonName = pokemon.name.toLowerCase().indexOf(search.value.toLowerCase()) !== -1
-      const isPokemonAbility = pokemon.abilities.filter((ability:Ability) => 
+      const isPokemonAbility = pokemon.abilities.filter((ability:Ability) =>
         ability.name.toLowerCase().indexOf(search.value.toLowerCase()) !== -1
       ).length > 0;
 
@@ -404,13 +404,13 @@ onMounted(async () => {
 }
 
 @keyframes ripple {
-  0% { 
-    transform: scale(0); 
-    opacity: 1; 
+  0% {
+    transform: scale(0);
+    opacity: 1;
   }
-  100% { 
-    transform: scale(2); 
-    opacity: 0; 
+  100% {
+    transform: scale(2);
+    opacity: 0;
   }
 }
 
