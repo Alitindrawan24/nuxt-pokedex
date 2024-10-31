@@ -2,7 +2,8 @@
   <div :class="{'bg-gray-100': !isDark, 'bg-gray-900': isDark}" class="transition-colors duration-700">
     <div class="container px-8 py-4 mx-auto">
       <section class="mt-8">
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex flex-col lg:flex-row gap-4 items-center justify-between mb-4">
+
           <!-- Dropdown for selecting number of Pokémon per page -->
           <div class="flex items-center">
             <label for="pageSize" class="mr-2" :class="{'text-gray-800': !isDark, 'text-white': isDark}">
@@ -36,12 +37,12 @@
           </div>
 
           <!-- Search Pokemon -->
-          <div class="flex items-center justify-center gap-2">
-            <label for="pokemon_name" class="block text-sm font-medium" :class="{'text-gray-800': !isDark, 'text-white': isDark}"
+          <div class="flex items-center justify-center">
+            <label for="pokemon_name" class="mr-2 block text-sm font-medium" :class="{'text-gray-800': !isDark, 'text-white': isDark}"
             > Search:
             </label>
             <input v-model="search" type="text" id="pokemon_name"
-              class="text-sm rounded-lg block w-full px-2.5 py-2 border focus:ring-blue-500 focus:border-blue-500"
+              class="text-sm rounded-lg block w-full max-w-sm px-2.5 py-2 border focus:ring-blue-500 focus:border-blue-500"
               :class="{'bg-[#afe0eb] text-gray-800 placeholder:text-gray-800 border-gray-300': !isDark, 
                       'bg-gray-700 text-white border-gray-600': isDark}"
               placeholder="Enter pokemon name..." 
@@ -49,7 +50,7 @@
           </div>
 
           <!-- Pagination navigation -->
-          <div>
+          <div class="flex items-center justify-between">
             <button 
               @click="prevPage" 
               :disabled="currentPage === 1"
@@ -214,7 +215,7 @@
           </table>
         </div>
 
-        <div class="flex justify-between mt-4">
+        <div class="flex items-center justify-between mt-4">
           <button 
             @click="prevPage" 
             :disabled="currentPage === 1"
@@ -390,6 +391,7 @@ onMounted(async () => {
 });
 
 </script>
+
 
 <style scoped>
 @keyframes spin {
