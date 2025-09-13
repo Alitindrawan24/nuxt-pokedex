@@ -18,7 +18,6 @@
   "devDependencies": {
     "@nuxt/icon": "^1.6.1",
     "@nuxtjs/tailwindcss": "^6.11.4",
-    "nuxt-icon": "^1.0.0-beta.7",
     "nuxt-lodash": "^2.5.3"
   }
 }
