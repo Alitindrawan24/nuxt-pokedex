@@ -1,5 +1,11 @@
 <template>
-  <div :class="{'bg-gray-100': !isDark, 'bg-gray-900': isDark}" class="transition-colors duration-700">
+  <div 
+    :class="[
+      {'bg-gray-100': !isDark && !selectedPokemon, 'bg-gray-900': isDark && !selectedPokemon}
+    ]" 
+    :style="selectedPokemon ? getBackgroundStyle(selectedPokemon.types[0].name) : ''"
+    class="transition-all duration-700 min-h-screen"
+  >
     <div class="container px-8 py-4 mx-auto">
       <section class="mt-8">
         <div class="flex flex-col lg:flex-row gap-4 items-center justify-between mb-4">
@@ -77,7 +83,18 @@
             </button>
           </div>
 
-        <div class="flex justify-end ">
+        <div class="flex justify-end gap-2">
+        <!-- Clear Selection Button -->
+        <button
+          v-if="selectedPokemon"
+          @click="clearSelection"
+          class="relative flex items-center justify-center gap-2 px-3 py-2 overflow-hidden transition-all duration-500 border rounded-full text-sm"
+          :class="{'bg-red-100 text-red-800 border-red-300 hover:bg-red-200': !isDark,
+                  'bg-red-900 text-red-200 border-red-700 hover:bg-red-800': isDark}"
+        >
+          Clear Selection
+        </button>
+        
         <button
           @click="handleThemeToggle"
           class="relative flex items-center justify-center gap-2 px-3 py-3 overflow-hidden transition-all duration-500 border rounded-full"
@@ -143,17 +160,26 @@
                 v-show="show(pokemon)"
                 :class="[
                   isDark ? 'bg-slate-900' : 'bg-white',
-                  'border-b',
+                  'border-b transition-all duration-300 hover:scale-[1.02] hover:shadow-lg cursor-pointer',
                   isDark ? 'border-gray-700' : 'border-gray-200',
+                  selectedPokemon?.id === pokemon.id ? 'ring-2 ring-blue-500 bg-blue-50' : '',
                   `bg-gradient-to-r from-${pokemon.types[0].name} via-${pokemon.types[0].name}/75 to-${pokemon.types[0].name}/50`
                 ]"
+                @click="selectPokemon(pokemon)"
               >
                 <th scope="row" class="px-4 py-2 font-medium whitespace-nowrap"
                     :class="{'text-gray-900': !isDark, 'text-white': isDark}">
                   {{ pokemon.id }}
                 </th>
                 <td class="px-4 py-2">
-                  <NuxtImg :src="pokemon.sprite" :alt="pokemon.name" loading="lazy" />
+                  <div class="pokemon-image-container cursor-pointer" @click="selectPokemon(pokemon)">
+                    <NuxtImg 
+                      :src="pokemon.sprite" 
+                      :alt="pokemon.name" 
+                      loading="lazy" 
+                      class="pokemon-sprite transition-all duration-300 hover:scale-125 hover:rotate-12 hover:drop-shadow-lg"
+                    />
+                  </div>
                 </td>
                 <td class="px-4 py-2 font-medium whitespace-nowrap"
                     :class="{'text-gray-900': !isDark, 'text-white': isDark}">
@@ -240,12 +266,163 @@
         </div>
       </section>
     </div>
+
+    <!-- Pokemon Description Modal -->
+    <div 
+      v-if="selectedPokemon && showModal" 
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      @click="closeModal"
+    >
+      <div 
+        class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 transform transition-all duration-300 scale-100 border-t-4"
+        :style="{ borderTopColor: typeColors[selectedPokemon.types[0].name as keyof typeof typeColors]?.dark || '#6B7280' }"
+        @click.stop
+      >
+        <div class="flex justify-between items-start mb-4">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white capitalize">
+            {{ selectedPokemon.name }}
+          </h2>
+          <button 
+            @click="closeModal"
+            class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-xl"
+          >
+            ✕
+          </button>
+        </div>
+        
+        <div class="flex flex-col items-center mb-4">
+          <div class="pokemon-modal-image mb-4">
+            <NuxtImg 
+              :src="selectedPokemon.sprite" 
+              :alt="selectedPokemon.name" 
+              class="w-24 h-24 mx-auto animate-bounce"
+            />
+          </div>
+          
+          <div class="flex gap-2 mb-4 justify-center">
+            <img 
+              v-for="(type, key) in selectedPokemon.types" 
+              :key="key" 
+              :src="type.gif" 
+              :alt="type.name" 
+              class="w-16 h-12 object-contain"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-3 text-sm">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <span class="font-semibold text-gray-700 dark:text-gray-300">Height:</span>
+              <span class="text-gray-900 dark:text-white ml-2">{{ selectedPokemon.height }}m</span>
+            </div>
+            <div>
+              <span class="font-semibold text-gray-700 dark:text-gray-300">Weight:</span>
+              <span class="text-gray-900 dark:text-white ml-2">{{ selectedPokemon.weight }}kg</span>
+            </div>
+          </div>
+          
+          <div>
+            <span class="font-semibold text-gray-700 dark:text-gray-300">Abilities:</span>
+            <div class="flex flex-wrap gap-1 mt-1">
+              <span 
+                v-for="(ability, key) in selectedPokemon.abilities" 
+                :key="key"
+                class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-xs capitalize"
+              >
+                {{ ability.name }}
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <span class="font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Base Stats:</span>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-600 dark:text-gray-400">HP</span>
+                <div class="flex items-center gap-2">
+                  <div class="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div 
+                      class="bg-green-500 h-2 rounded-full transition-all duration-500 animate-fill-bar"
+                      :style="`width: ${(selectedPokemon.base_stats.hp / 255) * 100}%`"
+                    ></div>
+                  </div>
+                  <span class="text-xs font-medium w-8 text-gray-900 dark:text-white">{{ selectedPokemon.base_stats.hp }}</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-600 dark:text-gray-400">ATK</span>
+                <div class="flex items-center gap-2">
+                  <div class="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div 
+                      class="bg-red-500 h-2 rounded-full transition-all duration-500 animate-fill-bar"
+                      :style="`width: ${(selectedPokemon.base_stats.attack / 255) * 100}%`"
+                    ></div>
+                  </div>
+                  <span class="text-xs font-medium w-8 text-gray-900 dark:text-white">{{ selectedPokemon.base_stats.attack }}</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-600 dark:text-gray-400">SPA</span>
+                <div class="flex items-center gap-2">
+                  <div class="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div 
+                      class="bg-purple-500 h-2 rounded-full transition-all duration-500 animate-fill-bar"
+                      :style="`width: ${(selectedPokemon.base_stats.special_attack / 255) * 100}%`"
+                    ></div>
+                  </div>
+                  <span class="text-xs font-medium w-8 text-gray-900 dark:text-white">{{ selectedPokemon.base_stats.special_attack }}</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-600 dark:text-gray-400">DEF</span>
+                <div class="flex items-center gap-2">
+                  <div class="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div 
+                      class="bg-blue-500 h-2 rounded-full transition-all duration-500 animate-fill-bar"
+                      :style="`width: ${(selectedPokemon.base_stats.defense / 255) * 100}%`"
+                    ></div>
+                  </div>
+                  <span class="text-xs font-medium w-8 text-gray-900 dark:text-white">{{ selectedPokemon.base_stats.defense }}</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-600 dark:text-gray-400">SPD</span>
+                <div class="flex items-center gap-2">
+                  <div class="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div 
+                      class="bg-indigo-500 h-2 rounded-full transition-all duration-500 animate-fill-bar"
+                      :style="`width: ${(selectedPokemon.base_stats.special_defense / 255) * 100}%`"
+                    ></div>
+                  </div>
+                  <span class="text-xs font-medium w-8 text-gray-900 dark:text-white">{{ selectedPokemon.base_stats.special_defense }}</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-600 dark:text-gray-400">SPE</span>
+                <div class="flex items-center gap-2">
+                  <div class="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div 
+                      class="bg-yellow-500 h-2 rounded-full transition-all duration-500 animate-fill-bar"
+                      :style="`width: ${(selectedPokemon.base_stats.speed / 255) * 100}%`"
+                    ></div>
+                  </div>
+                  <span class="text-xs font-medium w-8 text-gray-900 dark:text-white">{{ selectedPokemon.base_stats.speed }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 const isDark = ref(true);
 const isAnimating = ref(false);
+const selectedPokemon = ref<Pokemon | null>(null);
+const showModal = ref(false);
 
 const handleThemeToggle = () => {
   isAnimating.value = true;
@@ -258,6 +435,53 @@ const handleThemeToggle = () => {
 };
 const toggleTheme = () => {
   isDark.value = !isDark.value;
+};
+
+const selectPokemon = (pokemon: Pokemon) => {
+  selectedPokemon.value = pokemon;
+  showModal.value = true;
+};
+
+const closeModal = () => {
+  showModal.value = false;
+  setTimeout(() => {
+    selectedPokemon.value = null;
+  }, 300);
+};
+
+// Color mapping for Pokemon types
+const typeColors = {
+  normal: { light: '#F5F5DC', medium: '#E6E6B8', dark: '#D4D494' },
+  fire: { light: '#FFE4E1', medium: '#FFB6C1', dark: '#FF69B4' },
+  water: { light: '#E0F6FF', medium: '#87CEEB', dark: '#4682B4' },
+  electric: { light: '#FFFACD', medium: '#F0E68C', dark: '#DAA520' },
+  grass: { light: '#F0FFF0', medium: '#98FB98', dark: '#32CD32' },
+  ice: { light: '#F0FFFF', medium: '#B0E0E6', dark: '#87CEEB' },
+  fighting: { light: '#FFE4E1', medium: '#CD5C5C', dark: '#B22222' },
+  poison: { light: '#E6E6FA', medium: '#DDA0DD', dark: '#9370DB' },
+  ground: { light: '#F5DEB3', medium: '#D2B48C', dark: '#CD853F' },
+  flying: { light: '#F0F8FF', medium: '#B0C4DE', dark: '#6495ED' },
+  psychic: { light: '#FFE4E1', medium: '#FFB6C1', dark: '#FF1493' },
+  bug: { light: '#F5FFFA', medium: '#90EE90', dark: '#228B22' },
+  rock: { light: '#F5F5DC', medium: '#D2B48C', dark: '#A0522D' },
+  ghost: { light: '#F8F8FF', medium: '#DDA0DD', dark: '#9370DB' },
+  dragon: { light: '#E6E6FA', medium: '#9370DB', dark: '#4B0082' },
+  dark: { light: '#2F2F2F', medium: '#1C1C1C', dark: '#000000' },
+  steel: { light: '#F8F8FF', medium: '#C0C0C0', dark: '#708090' },
+  fairy: { light: '#FFF0F5', medium: '#FFB6C1', dark: '#FF69B4' }
+};
+
+const getBackgroundStyle = (type: string) => {
+  const colors = typeColors[type as keyof typeof typeColors] || typeColors.normal;
+  return {
+    background: `linear-gradient(135deg, ${colors.light} 0%, ${colors.medium} 50%, ${colors.dark} 100%)`,
+    backgroundAttachment: 'fixed'
+  };
+};
+
+const clearSelection = () => {
+  selectedPokemon.value = null;
+  showModal.value = false;
 };
 
 const search = ref("");
@@ -359,8 +583,10 @@ const order = (key: string) => {
   orders.name = key
   orders.ordering = ordering
 
-  const shuffledData = useOrderBy(data.value, key, ordering);
-  data.value = shuffledData
+  if (data.value) {
+    const shuffledData = useOrderBy(data.value, key, ordering);
+    data.value = shuffledData;
+  }
 }
 
 const show = (pokemon:Pokemon) => {
@@ -379,15 +605,17 @@ onMounted(async () => {
   data.value = fetchedData.value;
 
   // Extract unique types from the Pokémon data
-  const allTypes = new Set<string>();
-  data.value.forEach((pokemon) => {
-    pokemon.types.forEach((type) => {
-      allTypes.add(type.name);
+  if (data.value) {
+    const allTypes = new Set<string>();
+    data.value.forEach((pokemon) => {
+      pokemon.types.forEach((type) => {
+        allTypes.add(type.name);
+      });
     });
-  });
 
-  // Convert Set to Array and update types
-  types.value = Array.from(allTypes);
+    // Convert Set to Array and update types
+    types.value = Array.from(allTypes);
+  }
 });
 
 </script>
@@ -416,5 +644,78 @@ onMounted(async () => {
 
 .ripple-effect {
   animation: ripple 0.6s ease-out;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.6);
+  }
+}
+
+.pokemon-sprite {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pokemon-sprite:hover {
+  animation: float 0.6s ease-in-out infinite;
+}
+
+.pokemon-image-container:hover .pokemon-sprite {
+  filter: brightness(1.2) contrast(1.1);
+}
+
+.pokemon-modal-image img {
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+}
+
+/* Custom type-based colors for better visual appeal */
+.bg-gradient-to-br {
+  background-attachment: fixed;
+}
+
+/* Enhanced hover effects for table rows */
+tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal entrance animation */
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.fixed .bg-white,
+.fixed .dark\\:bg-gray-800 {
+  animation: modalEnter 0.3s ease-out;
+}
+
+/* Stat bar animations */
+@keyframes fillBar {
+  from {
+    width: 0%;
+  }
+}
+
+.animate-fill-bar {
+  animation: fillBar 1s ease-out;
 }
 </style>
